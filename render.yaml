@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: trivia-backend
+    env: docker
+    plan: free
+    autoDeploy: true
+    region: frankfurt
