@@ -10,7 +10,7 @@ public class CorsConfig implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-				.allowedOrigins("https://trivia-ui-delta.vercel.app/**")
+				.allowedOrigins("https://trivia-ui-delta.vercel.app")
 				.allowedMethods("*")
 				.allowedHeaders("*");
 	}
