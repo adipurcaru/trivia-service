@@ -51,8 +51,9 @@ public class GptService {
             prompt = """
                 Genereaza 10 intrebari despre capitalele lumii in limba romana.
                 Amesteca intrebarile intre doua formate:
-                1. Care este capitala tarii X?
-                2. Capitala Y apartine carei tari?
+                1. Care este capitala X?
+                2. Orasul Y apartine carei tari? 
+                unde X reprezinta numele tarii, iar Y reprezinta un nume de capitala.
                 Returneaza rezultatul EXCLUSIV ca JSON pur, fara explicatii, fara backticks, fara format Markdown.
                 [
                   {
