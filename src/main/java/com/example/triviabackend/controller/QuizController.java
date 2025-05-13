@@ -17,7 +17,8 @@ public class QuizController {
     private GptService gptService;
 
     @GetMapping("/questions")
-    public List<Question> getQuestions() throws JsonProcessingException {
-        return gptService.generateQuestions();
+    public List<Question> getQuestions(@RequestParam(defaultValue = "cultura", name = "type") String type) throws JsonProcessingException {
+        return gptService.generateQuestions(type);
     }
+
 }

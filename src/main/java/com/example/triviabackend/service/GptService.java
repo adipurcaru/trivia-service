@@ -2,6 +2,7 @@ package com.example.triviabackend.service;
 
 import com.example.triviabackend.dto.ChatRequestDto;
 import com.example.triviabackend.model.Question;
+import com.example.triviabackend.utils.ApplicationConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,16 +22,20 @@ public class GptService {
 
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
 
-    public List<Question> generateQuestions() throws JsonProcessingException {
+    public List<Question> generateQuestions(String type) throws JsonProcessingException {
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
                 .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
                 .writeTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
                 .build();
 
+        String prompt;
 
-        String prompt = """
-                Genereaza 10 intrebari de cultura generala in limba romana.\s
+        if(ApplicationConstants.QUIZ_CULTURA_GEN.equalsIgnoreCase(type)) {
+            prompt = """
+                Genereaza 10 intrebari de cultura generala in limba romana de dificultate medie.
+                Nu repeta structura sau tema intrebarilor. Variaza domeniile si stilul.
+                Nu include intrebari deja folosite in acest quiz sau anterior.
                 Fiecare intrebare trebuie sa contina 4 variante de raspuns si un singur raspuns corect.
                 Returneaza rezultatul EXCLUSIV ca JSON pur, fara explicatii, fara backticks, fara format Markdown.
                 [
@@ -42,6 +47,24 @@ public class GptService {
                   ...
                 ]
                 """;
+        } else {
+            prompt = """
+                Genereaza 10 intrebari despre capitalele lumii in limba romana.
+                Amesteca intrebarile intre doua formate:
+                1. Care este capitala tarii X?
+                2. Capitala Y apartine carei tari?
+                Returneaza rezultatul EXCLUSIV ca JSON pur, fara explicatii, fara backticks, fara format Markdown.
+                [
+                  {
+                    "question": "...",
+                    "options": ["A", "B", "C", "D"],
+                    "correctAnswer": "..."
+                  }
+                ]
+                """;
+        }
+
+
 
         List<ChatRequestDto.Message> messages = List.of(
                 new ChatRequestDto.Message("system", "Ești un generator de quiz-uri de cultură generală. " +
@@ -51,7 +74,7 @@ public class GptService {
                 new ChatRequestDto.Message("user", prompt)
         );
 
-        ChatRequestDto body = new ChatRequestDto("gpt-3.5-turbo", messages, 0.7, 1000);
+        ChatRequestDto body = new ChatRequestDto("gpt-3.5-turbo", messages, 0.5, 800);
 
         String jsonBody = new ObjectMapper().writeValueAsString(body);
 
