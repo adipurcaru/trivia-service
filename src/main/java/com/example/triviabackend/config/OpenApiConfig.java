@@ -1,4 +1,4 @@
-package com.example.triviabackend.security;
+package com.example.triviabackend.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
