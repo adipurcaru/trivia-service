@@ -273,7 +273,12 @@ public class GptService {
 
 
 	public List<QuestionDto> getRandomQuestions(String type, Integer count) {
-		return questionRepository.findRandomQuestionsByType(type, PageRequest.of(0, count)).stream().map(Question::toDto).toList();
+		if(ApplicationConstants.QUIZ_CAPITALE.equalsIgnoreCase(type)){
+			return questionRepository.findRandomCulturaGenQuestions(PageRequest.of(0, count)).stream().map(Question::toDto).toList();
+		} else {
+			return questionRepository.findRandomQuestionsByType(ApplicationConstants.QUIZ_CULTURA_GEN,
+					PageRequest.of(0, count)).stream().map(Question::toDto).toList();
+		}
 	}
 }
 

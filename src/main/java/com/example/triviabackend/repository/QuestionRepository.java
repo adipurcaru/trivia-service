@@ -19,4 +19,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 	@Query(value = "SELECT * FROM question WHERE type = :type ORDER BY RANDOM()", nativeQuery = true)
 	List<Question> findRandomQuestionsByType(@Param("type") String type, Pageable pageable);
 
+	@Query(value = "SELECT * FROM question WHERE type != 'capitale' ORDER BY RANDOM()", nativeQuery = true)
+	List<Question> findRandomCulturaGenQuestions(Pageable pageable);
 }
