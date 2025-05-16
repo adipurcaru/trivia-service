@@ -62,36 +62,36 @@ public class GptService {
 			String prompt;
 			if (ApplicationConstants.QUIZ_CULTURA_GEN.equalsIgnoreCase(type)) {
 				prompt = """
-                    Genereaza %d intrebari de cultura generala in limba romana de dificultate medie, dar unele sa fie chiar putin mai grele.
-                    Este foarte important sa nu repeti intrebarile deloc.
-                    Este foarte important sa variaza domeniile si stilul intrebarii.
-                    Fiecare intrebare trebuie sa contina 4 variante de raspuns si un singur raspuns corect.
-                    Returneaza rezultatul EXCLUSIV ca JSON pur, fara explicatii, fara backticks, fara format Markdown.
-                    [
-                      {
-                        "question": "...",
-                        "options": ["A", "B", "C", "D"],
-                        "correctAnswer": "...",
-                        "type": "cultura_generala"
-                      }
-                    ]
-                    """.formatted(currentBatch);
+						Genereaza %d intrebari de cultura generala in limba romana de dificultate medie, dar unele sa fie chiar putin mai grele.
+						Este foarte important sa nu repeti intrebarile deloc.
+						Este foarte important sa variaza domeniile si stilul intrebarii.
+						Fiecare intrebare trebuie sa contina 4 variante de raspuns si un singur raspuns corect.
+						Returneaza rezultatul EXCLUSIV ca JSON pur, fara explicatii, fara backticks, fara format Markdown.
+						[
+						  {
+						    "question": "...",
+						    "options": ["A", "B", "C", "D"],
+						    "correctAnswer": "...",
+						    "type": "cultura_generala"
+						  }
+						]
+						""".formatted(currentBatch);
 			} else {
 				prompt = """
-                    Genereaza %d intrebari despre capitalele lumii in limba romana.
-                    Amesteca intrebarile intre doua formate:
-                    1. Care este capitala X?
-                    2. Orasul Y apartine carei tari?
-                    Returneaza rezultatul EXCLUSIV ca JSON pur, fara explicatii, fara backticks, fara format Markdown.
-                    [
-                      {
-                        "question": "...",
-                        "options": ["A", "B", "C", "D"],
-                        "correctAnswer": "...",
-                        "type": "capitale"
-                      }
-                    ]
-                    """.formatted(currentBatch);
+						Genereaza %d intrebari despre capitalele lumii in limba romana.
+						Amesteca intrebarile intre doua formate:
+						1. Care este capitala X?
+						2. Orasul Y apartine carei tari?
+						Returneaza rezultatul EXCLUSIV ca JSON pur, fara explicatii, fara backticks, fara format Markdown.
+						[
+						  {
+						    "question": "...",
+						    "options": ["A", "B", "C", "D"],
+						    "correctAnswer": "...",
+						    "type": "capitale"
+						  }
+						]
+						""".formatted(currentBatch);
 			}
 
 			List<ChatRequestDto.Message> messages = List.of(
@@ -116,7 +116,8 @@ public class GptService {
 				String content = mapper.readTree(responseBody)
 						.get("choices").get(0).get("message").get("content").asText();
 
-				List<QuestionDto> dtoList = mapper.readValue(content, new TypeReference<>() {});
+				List<QuestionDto> dtoList = mapper.readValue(content, new TypeReference<>() {
+				});
 
 				for (QuestionDto dto : dtoList) {
 					Question q = new Question();
@@ -158,22 +159,22 @@ public class GptService {
 
 		// Mesajul de sistem
 		messages.add(new ChatRequestDto.Message("system", """
-        Esti un generator de quiz-uri de cultura generala. Raspunsurile trebuie sa fie unice si variate.
-        Formatul este JSON, fara explicatii, fara backticks, fara markdown.
-        Nu repeta nicio intrebare sau raspuns. Fara diacritice.
-    """));
+				    Esti un generator de quiz-uri de cultura generala. Raspunsurile trebuie sa fie unice si variate.
+				    Formatul este JSON, fara explicatii, fara backticks, fara markdown.
+				    Nu repeta nicio intrebare sau raspuns. Fara diacritice.
+				"""));
 
 		int maxPerRequest = 20;
 		int calls = (int) Math.ceil(count / (double) maxPerRequest);
 
-		log.info("Executing {} requests..", calls );
+		log.info("Executing {} requests..", calls);
 		for (int i = 0; i < calls; i++) {
 			int batchCount = Math.min(maxPerRequest, count - allQuestions.size());
 
 			log.info("Batch {}", i);
 			String prompt;
 
-			if(ApplicationConstants.QUIZ_CULTURA_GEN.equalsIgnoreCase(type)) {
+			if (ApplicationConstants.QUIZ_CULTURA_GEN.equalsIgnoreCase(type)) {
 				// Promptul pentru batch-ul curent
 				prompt = String.format("""
 						              Genereaza %d intrebari de cultura generala in limba romana de dificultate medie, dar unele sa fie chiar putin mai grele.
@@ -203,20 +204,20 @@ public class GptService {
 						              """, batchCount);
 			} else {
 				prompt = """
-                    Genereaza %d intrebari despre capitalele lumii in limba romana.
-                    Amesteca intrebarile intre doua formate:
-                    1. Care este capitala X?
-                    2. Orasul Y apartine carei tari?
-                    Returneaza rezultatul EXCLUSIV ca JSON pur, fara explicatii, fara backticks, fara format Markdown.
-                    [
-                      {
-                        "question": "...",
-                        "options": ["A", "B", "C", "D"],
-                        "correctAnswer": "...",
-                        "type": "capitale"
-                      }
-                    ]
-                    """.formatted(batchCount);
+						Genereaza %d intrebari despre capitalele lumii in limba romana.
+						Amesteca intrebarile intre doua formate:
+						1. Care este capitala X?
+						2. Orasul Y apartine carei tari?
+						Returneaza rezultatul EXCLUSIV ca JSON pur, fara explicatii, fara backticks, fara format Markdown.
+						[
+						  {
+						    "question": "...",
+						    "options": ["A", "B", "C", "D"],
+						    "correctAnswer": "...",
+						    "type": "capitale"
+						  }
+						]
+						""".formatted(batchCount);
 			}
 			messages.add(new ChatRequestDto.Message("user", prompt));
 
@@ -244,7 +245,8 @@ public class GptService {
 				messages.add(new ChatRequestDto.Message("assistant", content));
 
 				// Deserializare
-				List<QuestionDto> dtoList = mapper.readValue(content, new TypeReference<>() {});
+				List<QuestionDto> dtoList = mapper.readValue(content, new TypeReference<>() {
+				});
 
 				for (QuestionDto dto : dtoList) {
 					Question q = new Question();
@@ -273,7 +275,7 @@ public class GptService {
 
 
 	public List<QuestionDto> getRandomQuestions(String type, Integer count) {
-		if(ApplicationConstants.QUIZ_CAPITALE.equalsIgnoreCase(type)){
+		if (ApplicationConstants.QUIZ_CAPITALE.equalsIgnoreCase(type)) {
 			return questionRepository.findRandomCulturaGenQuestions(PageRequest.of(0, count)).stream().map(Question::toDto).toList();
 		} else {
 			return questionRepository.findRandomQuestionsByType(ApplicationConstants.QUIZ_CULTURA_GEN,
