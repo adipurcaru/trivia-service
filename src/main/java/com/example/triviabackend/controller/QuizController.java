@@ -24,7 +24,7 @@ public class QuizController {
 	@Autowired
 	private GptService gptService;
 
-	@PostMapping("/questions/generate")
+	//@PostMapping("/questions/generate")
 	public List<Question> generateQuestions(@RequestParam(defaultValue = "cultura", name = "type") String type,
 									   @RequestParam(name = "count") Integer count) throws IOException {
 		return gptService.generateQuestionsWithContext(type, count);
