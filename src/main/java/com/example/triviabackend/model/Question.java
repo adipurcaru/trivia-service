@@ -1,41 +1,59 @@
 package com.example.triviabackend.model;
 
+import com.example.triviabackend.dto.QuestionDto;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
 import java.util.List;
 
+
+@AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@Builder
+@Entity
+@Table(name = "QUESTION")
 public class Question {
-    private String question;
-    private List<String> options;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String description;
+
+    private String type;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Answer> answers;
+
     private String correctAnswer;
 
-    public Question() {}
+    public static QuestionDto toDto(Question question){
+        List<String> options = new ArrayList<>();
+        question.getAnswers().forEach(answer -> {
+            options.add(answer.getDescription());
+        });
 
-    public Question(String question, List<String> options, String correctAnswer) {
-        this.question = question;
-        this.options = options;
-        this.correctAnswer = correctAnswer;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public List<String> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<String> options) {
-        this.options = options;
-    }
-
-    public String getCorrectAnswer() {
-        return correctAnswer;
-    }
-
-    public void setCorrectAnswer(String correctAnswer) {
-        this.correctAnswer = correctAnswer;
+        return QuestionDto.builder()
+                .type(question.getType())
+                .question(question.getDescription())
+                .correctAnswer(question.getCorrectAnswer())
+                .options(options)
+                .build();
     }
 }

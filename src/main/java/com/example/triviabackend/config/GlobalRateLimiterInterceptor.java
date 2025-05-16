@@ -20,7 +20,7 @@ public class GlobalRateLimiterInterceptor implements HandlerInterceptor {
 
 	public GlobalRateLimiterInterceptor() {
 		this.limiter = RateLimiter.of("global", RateLimiterConfig.custom()
-				.limitForPeriod(5)
+				.limitForPeriod(10)
 				.limitRefreshPeriod(Duration.ofSeconds(1))
 				.timeoutDuration(Duration.ofMillis(0))
 				.build());
